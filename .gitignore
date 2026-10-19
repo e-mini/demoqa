@@ -8,3 +8,9 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Test Files
+sampleFile.jpeg
+
+# Operating System File
+.DS_Store

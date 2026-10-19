@@ -1,5 +1,6 @@
 import re
 from playwright.sync_api import Page, expect
+from pathlib import Path
 
 
 def test_text_box(page):
@@ -116,10 +117,17 @@ def test_download_and_upload(page):
     page.get_by_text("Elements").click()
     page.locator("a[href='/upload-download']").click()
 
-    page.locator("a[id='downloadButton']").click()
+    with page.expect_download() as albert:
+        page.locator("a[id='downloadButton']").click()
+    ben = albert.value
+    ben.save_as("/Users/elise/code/demoqa/tests/support/" + ben.suggested_filename)
+    file_path = Path("/Users/elise/code/demoqa/tests/support/" + ben.suggested_filename)
+    assert file_path.exists()
+    assert file_path.is_file()
+
+
     page.locator("input[id='uploadFile']").click()
     #skip upload and come back
-    #see how to assert on the file name that has beeen downloaded - playwright download verified python file
 
 def test_dynamic_properties(page):
     page.goto("https://demoqa.com/")

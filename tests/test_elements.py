@@ -13,6 +13,8 @@ def test_text_box(page):
     page.locator("textarea[id='permanentAddress']").fill("123 Main St")
     page.locator("button[id='submit']").click()
 
+    expect(page.locator("p[id=name]")).to_contain_text("Jamie Test")
+
 
 def test_check_box(page):
     page.goto("https://demoqa.com/")
@@ -21,6 +23,10 @@ def test_check_box(page):
 
     page.locator("span.rc-tree-checkbox").click()
 
+    expect(page.locator("div[id='result']")).to_contain_text("downloads")
+    expect(page.locator("div[id='result']")).to_contain_text("documents")
+    expect(page.locator("div[id='result']")).to_contain_text("desktop")
+#Assert that the one clicked is checked and the one not clicked is not checked
 
 def test_radio_button(page):
     page.goto("https://demoqa.com/")
@@ -28,6 +34,7 @@ def test_radio_button(page):
     page.get_by_text("Radio Button").click()
 
     page.locator("input[id='yesRadio']").click()
+    expect(page.locator("span[class='text-success']")).to_contain_text("Yes")
 
 
 def test_web_tables(page):
@@ -44,15 +51,22 @@ def test_web_tables(page):
     page.locator("input[id='department']").fill("Development")
     page.locator("button[id='submit']").click()
 
+    #expect() finish this assertion for homework - we are asserting on the row we added and asserting on all data added
+
 
 def test_buttons(page):
     page.goto("https://demoqa.com/")
     page.get_by_text("Elements").click()
     page.get_by_text("Buttons").click()
 
-    page.get_by_text("Click Me").click
+    page.get_by_text("Click Me").nth(2).click()
     page.locator("button[id='doubleClickBtn']").dblclick()
     page.locator("button[id='rightClickBtn']").click(button="right")
+
+    expect(page.get_by_text("You have done a double click")).to_be_visible()
+    expect(page.get_by_text("You have done a right click")).to_be_visible()
+    expect(page.get_by_text("You have done a dynamic click")).to_be_visible()
+    
 
 def test_links(page):
     page.goto("https://demoqa.com/")
@@ -61,10 +75,59 @@ def test_links(page):
 
     page.locator("a[id='simpleLink']").click()
     page.locator("a[id='dynamicLink']").click()
+    
     page.locator("a[id='created']").click()
+    expect(page.locator("p[id='linkResponse']")).to_contain_text("201")
+    
     page.locator("a[id='no-content']").click()
+
+
     page.locator("a[id='moved']").click()
+
+
     page.locator("a[id='bad-request']").click()
+
+
     page.locator("a[id='unauthorized']").click()
+
+
     page.locator("a[id='forbidden']").click()
-    page.locator("a[id='invalid-url']").click
+
+
+    page.locator("a[id='invalid-url']").click()
+
+    #comeback to the ones where you must verify in a new tab
+
+
+def test_broken_links(page):
+    page.goto("https://demoqa.com/")
+    page.get_by_text("Elements").click()
+    page.locator("a[href='/broken']").click()
+
+    page.locator("a[href='http://demoqa.com']").click()
+    expect(page.locator("img[class='banner-image']")).to_be_visible()
+
+    page.go_back()
+    page.locator("a[href='http://the-internet.herokuapp.com/status_codes/500']").click()
+    expect(page.locator("h3")).to_contain_text("Status Codes", timeout=60000)
+
+def test_download_and_upload(page):
+    page.goto("https://demoqa.com/")
+    page.get_by_text("Elements").click()
+    page.locator("a[href='/upload-download']").click()
+
+    page.locator("a[id='downloadButton']").click()
+    page.locator("input[id='uploadFile']").click()
+    #skip upload and come back
+    #see how to assert on the file name that has beeen downloaded - playwright download verified python file
+
+def test_dynamic_properties(page):
+    page.goto("https://demoqa.com/")
+    page.get_by_text("Elements").click()
+    page.locator("a[href='/dynamic-properties']").click()
+
+    expect(page.get_by_text("This text has random Id")).to_be_visible()
+    expect(page.locator("button[id='enableAfter']")).to_be_enabled(timeout=10000)
+    page.locator("button[id='colorChange']").click()
+    #skip asserting color change for now
+    expect(page.locator("button[id='visibleAfter']")).to_be_visible()
